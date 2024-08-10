@@ -2,8 +2,8 @@ package main
 
 import (
 	"bufio"
-	"example.com/corni/pokeAPI"
 	"fmt"
+	"github.com/c00rni/pokedex/internal/api"
 	"os"
 )
 
@@ -32,15 +32,17 @@ func commandExit() error {
 }
 
 func main() {
-
-	getLocations := pokeAPI.Init()
+	config := api.Config{
+		Next:     "https://pokeapi.co/api/v2/location/?offset=0&limit=20",
+		Previous: "",
+	}
 
 	commandMap := func() error {
-		return getLocations(true)
+		return api.GetLocations(true, &config)
 	}
 
 	commandMapB := func() error {
-		return getLocations(false)
+		return api.GetLocations(false, &config)
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
