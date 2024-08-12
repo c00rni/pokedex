@@ -421,6 +421,30 @@ func main() {
 		return nil
 	}
 
+	commandInspect := func(opts ...string) error {
+		if len(opts) < 1 {
+			return errors.New("The catch command need a pokemon name as argument")
+		}
+		pokemonDetails, ok := pokedex[opts[0]]
+		if !ok {
+			fmt.Println("you have not caught that pokemon")
+			return nil
+		}
+		detailsString := fmt.Sprintf("Name: %v\nHeight: %v\nWeight: %v\nStats:", pokemonDetails.Forms[0].Name, pokemonDetails.Height, pokemonDetails.Weight)
+
+		fmt.Println(detailsString)
+		for _, stats := range pokemonDetails.Stats {
+			line := fmt.Sprintf(" - %v: %v", stats.Stat.Name, stats.BaseStat)
+			fmt.Println(line)
+		}
+		fmt.Println("Types:")
+		for _, types := range pokemonDetails.Types {
+			line := fmt.Sprintf(" - %v", types.Type.Name)
+			fmt.Println(line)
+		}
+		return nil
+	}
+
 	commandExplore := func(opts ...string) error {
 		var byteBodyResponse []byte
 		if len(opts) < 1 {
@@ -534,6 +558,11 @@ func main() {
 			name:        "catch",
 			description: "Attempt to capture a pokemon",
 			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "Print stats about a pokemon",
+			callback:    commandInspect,
 		},
 	}
 
