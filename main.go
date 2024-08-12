@@ -26,6 +26,33 @@ type response struct {
 	} `json:"results"`
 }
 
+type area struct {
+	Areas []struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"areas"`
+	GameIndices []struct {
+		GameIndex  int `json:"game_index"`
+		Generation struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"generation"`
+	} `json:"game_indices"`
+	ID    int    `json:"id"`
+	Name  string `json:"name"`
+	Names []struct {
+		Language struct {
+			Name string `json:"name"`
+			URL  string `json:"url"`
+		} `json:"language"`
+		Name string `json:"name"`
+	} `json:"names"`
+	Region struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"region"`
+}
+
 type config struct {
 	Next     string
 	Previous string
@@ -57,7 +84,7 @@ func printLocations(response response) {
 
 func main() {
 	config := config{
-		Next:     "https://pokeapi.co/api/v2/location/?offset=0&limit=20",
+		Next:     "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20",
 		Previous: "",
 	}
 
@@ -91,7 +118,7 @@ func main() {
 
 	commandMapB := func() error {
 		if config.Previous == "" {
-			config.Next = "https://pokeapi.co/api/v2/location/?offset=0&limit=20"
+			config.Next = "https://pokeapi.co/api/v2/location-area/?offset=0&limit=20"
 			return nil
 		}
 		var byteBodyResponse []byte
