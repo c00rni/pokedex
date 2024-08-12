@@ -346,21 +346,6 @@ type config struct {
 	Previous string
 }
 
-func commandHelp(opts ...string) error {
-	_, err := fmt.Print(`
-Welcome to the Pokedex!
-Usage:
-
-help: Displays a help message
-exit: Exit the Pokedex
-map: List 20 more locations
-mapb: List 20 last locations
-explore: List pokemon foun from an area
-catch: Attempt to catch a pokemon
-`)
-	return err
-}
-
 func commandExit(_ ...string) error {
 	os.Exit(0)
 	return nil
@@ -441,6 +426,18 @@ func main() {
 		for _, types := range pokemonDetails.Types {
 			line := fmt.Sprintf(" - %v", types.Type.Name)
 			fmt.Println(line)
+		}
+		return nil
+	}
+
+	commandPokedex := func(opts ...string) error {
+		if len(opts) < 0 {
+			return errors.New("The pokedex command dont expect arguments.")
+		}
+
+		fmt.Println("Your Pokedex:")
+		for _, pokemon := range pokedex {
+			fmt.Println(" -", pokemon.Forms[0].Name)
 		}
 		return nil
 	}
@@ -526,9 +523,19 @@ func main() {
 		return nil
 	}
 
+	commands := make(map[string]cliCommand)
+
+	commandHelp := func(opts ...string) error {
+		fmt.Println("Welcome to the Pokedex!\nUsage:")
+		for _, command := range commands {
+			fmt.Println(fmt.Sprintf("%v: %v", command.name, command.description))
+		}
+		return nil
+	}
+
 	scanner := bufio.NewScanner(os.Stdin)
 
-	commands := map[string]cliCommand{
+	commands = map[string]cliCommand{
 		"help": {
 			name:        "help",
 			description: "Displays a help message",
@@ -541,12 +548,12 @@ func main() {
 		},
 		"map": {
 			name:        "map",
-			description: "Explore 20 more locations",
+			description: "Discover new areas",
 			callback:    commandMap,
 		},
 		"mapb": {
 			name:        "mapb",
-			description: "Explore 20 last locations",
+			description: "Diplay previous areas",
 			callback:    commandMapB,
 		},
 		"explore": {
@@ -563,6 +570,11 @@ func main() {
 			name:        "inspect",
 			description: "Print stats about a pokemon",
 			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "Print all the captured pokemon names",
+			callback:    commandPokedex,
 		},
 	}
 
